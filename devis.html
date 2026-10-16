@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Créateur de Devis</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f2f5;
+    padding: 20px;
+    color: #333;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+  }
+  h2 {
+    color: #3498db;
+    font-size: 18px;
+    margin: 20px 0 10px;
+  }
+  .section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+  label {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  input, textarea, select {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 13px;
+  }
+  th {
+    background: #3498db;
+    color: #fff;
+  }
+  td input {
+    width: 100%;
+    border: none;
+    padding: 5px;
+    background: transparent;
+  }
+  td input:focus { background: #eaf4fc; }
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.2s;
+    margin: 5px 5px 5px 0;
+  }
+  .btn-primary { background: #3498db; color: #fff; }
+  .btn-primary:hover { background: #2980b9; }
+  .btn-success { background: #27ae60; color: #fff; }
+  .btn-success:hover { background: #219150; }
+  .btn-danger { background: #e74c3c; color: #fff; }
+  .btn-danger:hover { background: #c0392b; }
+  .btn-secondary { background: #95a5a6; color: #fff; }
+  .btn-secondary:hover { background: #7f8c8d; }
+  .btn-small { padding: 5px 10px; font-size: 12px; }
+  .totals {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+  }
+  .totals div {
+    font-size: 15px;
+    padding: 5px 15px;
+    background: #ecf0f1;
+    border-radius: 5px;
+    min-width: 250px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .totals .total-final {
+    background: #3498db;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .actions {
+    text-align: center;
+    margin-top: 25px;
+  }
+  .numero-devis {
+    text-align: right;
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 15px;
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .container { box-shadow: none; padding: 10px; }
+    .no-print { display: none !important; }
+  }
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📄 Créateur de Devis</h1>
+  <div class="numero-devis">
+    Devis N° <span id="numeroDevis"></span> — Date : <span id="dateDevis"></span>
+  </div>
+
+  <!-- Infos émetteur / client -->
+  <div class="section">
+    <div class="grid">
+      <div>
+        <h2>🏢 Émetteur</h2>
+        <div class="form-group">
+          <label>Nom / Entreprise</label>
+          <input type="text" id="emNom" placeholder="Mon Entreprise SARL">
+        </div>
+        <div class="form-group">
+          <label>Adresse</label>
+          <input type="text" id="emAdresse" placeholder="1 rue Exemple, 75000 Paris">
+        </div>
+        <div class="form-group">
+          <label>Email / Téléphone</label>
+          <input type="text" id="emContact" placeholder="contact@exemple.fr">
+        </div>
+      </div>
+      <div>
+        <h2>👤 Client</h2>
+        <div class="form-group">
+          <label>Nom / Entreprise</label>
+          <input type="text" id="clNom" placeholder="Client Dupont">
+        </div>
+        <div class="form-group">
+          <label>Adresse</label>
+          <input type="text" id="clAdresse" placeholder="2 avenue Client, 69000 Lyon">
+        </div>
+        <div class="form-group">
+          <label>Email / Téléphone</label>
+          <input type="text" id="clContact" placeholder="client@email.fr">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lignes du devis -->
+  <div class="section">
+    <h2>📋 Détail des prestations</h2>
+    <table id="tableLignes">
+      <thead>
+        <tr>
+          <th style="width:45%">Description</th>
+          <th style="width:12%">Quantité</th>
+          <th style="width:18%">Prix unitaire (€)</th>
+          <th style="width:15%">Total (€)</th>
+          <th style="width:10%" class="no-print">Action</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyLignes"></tbody>
+    </table>
+    <button class="btn btn-primary btn-small no-print" onclick="ajouterLigne()">+ Ajouter une ligne</button>
+
+    <div class="form-group" style="margin-top:15px;">
+      <label>TVA (%)</label>
+      <input type="number" id="tva" value="20" min="0" step="0.1" style="max-width:120px;">
+    </div>
+
+    <div class="totals">
+      <div><span>Total HT :</span> <span id="totalHT">0,00 €</span></div>
+      <div><span>TVA :</span> <span id="montantTVA">0,00 €</span></div>
+      <div class="total-final"><span>Total TTC :</span> <span id="totalTTC">0,00 €</span></div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="section">
+    <h2>📝 Notes / Conditions</h2>
+    <textarea id="notes" rows="3" placeholder="Validité du devis : 30 jours. Modalités de paiement : ..."></textarea>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions no-print">
+    <button class="btn btn-success" onclick="window.print()">🖨️ Imprimer / PDF</button>
+    <button class="btn btn-primary" onclick="sauvegarder()">💾 Sauvegarder</button>
+    <button class="btn btn-secondary" onclick="charger()">📂 Charger</button>
+    <button class="btn btn-danger" onclick="reinitialiser()">🗑️ Réinitialiser</button>
+  </div>
+</div>
+
+<script>
+  // Générer un numéro de devis unique et la date
+  function initDevis() {
+    const now = new Date();
+    const num = 'DEV-' + now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') +
+                String(now.getDate()).padStart(2,'0') + '-' +
+                String(Math.floor(Math.random()*1000)).padStart(3,'0');
+    document.getElementById('numeroDevis').textContent = num;
+    document.getElementById('dateDevis').textContent = now.toLocaleDateString('fr-FR');
+  }
+
+  // Ajouter une ligne
+  function ajouterLigne(desc = '', qte = 1, prix = 0) {
+    const tbody = document.getElementById('tbodyLignes');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" class="ligne-desc" value="${desc}" placeholder="Description de la prestation"></td>
+      <td><input type="number" class="ligne-qte" value="${qte}" min="0" step="0.01"></td>
+      <td><input type="number" class="ligne-prix" value="${prix}" min="0" step="0.01"></td>
+      <td class="ligne-total">0,00 €</td>
+      <td class="no-print"><button class="btn btn-danger btn-small" onclick="supprimerLigne(this)">✖</button></td>
+    `;
+    tbody.appendChild(tr);
+    tr.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calculer));
+    calculer();
+  }
+
+  function supprimerLigne(btn) {
+    btn.closest('tr').remove();
+    calculer();
+  }
+
+  // Calculs
+  function calculer() {
+    let totalHT = 0;
+    document.querySelectorAll('#tbodyLignes tr').forEach(tr => {
+      const qte = parseFloat(tr.querySelector('.ligne-qte').value) || 0;
+      const prix = parseFloat(tr.querySelector('.ligne-prix').value) || 0;
+      const total = qte * prix;
+      tr.querySelector('.ligne-total').textContent = total.toFixed(2).replace('.', ',') + ' €';
+      totalHT += total;
+    });
+
+    const tvaTaux = parseFloat(document.getElementById('tva').value) || 0;
+    const tvaMontant = totalHT * tvaTaux / 100;
+    const ttc = totalHT + tvaMontant;
+
+    const fmt = v => v.toFixed(2).replace('.', ',') + ' €';
+    document.getElementById('totalHT').textContent = fmt(totalHT);
+    document.getElementById('montantTVA').textContent = fmt(tvaMontant);
+    document.getElementById('totalTTC').textContent = fmt(ttc);
+  }
+
+  document.getElementById('tva').addEventListener('input', calculer);
+
+  // Sauvegarde dans localStorage
+  function sauvegarder() {
+    const data = {
+      numero: document.getElementById('numeroDevis').textContent,
+      date: document.getElementById('dateDevis').textContent,
+      emNom: emNom.value, emAdresse: emAdresse.value, emContact: emContact.value,
+      clNom: clNom.value, clAdresse: clAdresse.value, clContact: clContact.value,
+      tva: tva.value, notes: notes.value,
+      lignes: [...document.querySelectorAll('#tbodyLignes tr')].map(tr => ({
+        desc: tr.querySelector('.ligne-desc').value,
+        qte: tr.querySelector('.ligne-qte').value,
+        prix: tr.querySelector('.ligne-prix').value
+      }))
+    };
+    localStorage.setItem('devis_sauvegarde', JSON.stringify(data));
+    alert('✅ Devis sauvegardé avec succès !');
+  }
+
+  function charger() {
+    const raw = localStorage.getItem('devis_sauvegarde');
+    if (!raw) { alert('Aucun devis sauvegardé.'); return; }
+    const data = JSON.parse(raw);
+    document.getElementById('numeroDevis').textContent = data.numero;
+    document.getElementById('dateDevis').textContent = data.date;
+    emNom.value = data.emNom || '';
+    emAdresse.value = data.emAdresse || '';
+    emContact.value = data.emContact || '';
+    clNom.value = data.clNom || '';
+    clAdresse.value = data.clAdresse || '';
+    clContact.value = data.clContact || '';
+    tva.value = data.tva || 20;
+    notes.value = data.notes || '';
+    document.getElementById('tbodyLignes').innerHTML = '';
+    (data.lignes || []).forEach(l => ajouterLigne(l.desc, l.qte, l.prix));
+    calculer();
+    alert('📂 Devis chargé !');
+  }
+
+  function reinitialiser() {
+    if (!confirm('Voulez-vous vraiment réinitialiser le devis ?')) return;
+    document.querySelectorAll('input, textarea').forEach(el => {
+      if (el.type === 'number') el.value = el.id === 'tva' ? 20 : 1;
+      else if (el.type !== 'button') el.value = '';
+    });
+    tva.value = 20;
+    document.getElementById('tbodyLignes').innerHTML = '';
+    ajouterLigne('Prestation de service', 1, 100);
+    initDevis();
+  }
+
+  // Initialisation
+  initDevis();
+  ajouterLigne('Prestation de service', 1, 100);
+</script>
+</body>
+</html>
