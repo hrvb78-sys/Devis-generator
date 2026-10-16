@@ -19,3 +19,6 @@ Aucune installation requise.
 ## 📝 Licence
 
 MIT
+## 📸 Aperçu
+
+![Capture d'écran](Screenshot_2026-10-16-20-48-05-502_com.brave.browser.jpg)
